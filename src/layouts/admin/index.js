@@ -1,13 +1,13 @@
 // Chakra imports
-import { Portal, Box, useDisclosure } from "@chakra-ui/react";
-import Footer from "components/footer/FooterAdmin.js";
+import { Box, Portal, useDisclosure } from "@chakra-ui/react";
 // Layout components
 import Navbar from "components/navbar/NavbarAdmin.js";
 import Sidebar from "components/sidebar/Sidebar.js";
 import { SidebarContext } from "contexts/SidebarContext";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
+import NewUser from "views/admin/users/new-user";
 
 // Custom Chakra theme
 export default function Dashboard(props) {
@@ -89,9 +89,16 @@ export default function Dashboard(props) {
     return activeNavbar;
   };
   const getRoutes = (routes) => {
-    return routes.map((prop, key) => {
+    let allRoutes = []; // Array to hold all routes
+  
+    routes.forEach((prop, key) => {
+      if ('children' in prop) {
+        const childRoutes = getRoutes(prop.children);
+        allRoutes = [...childRoutes, ...allRoutes]; // Concatenate child routes before current routes
+      }
+  
       if (prop.layout === "/admin") {
-        return (
+        allRoutes.push(
           <Route
             path={prop.layout + prop.path}
             component={prop.component}
@@ -99,16 +106,21 @@ export default function Dashboard(props) {
           />
         );
       }
+  
       if (prop.collapse) {
-        return getRoutes(prop.items);
+        const collapseRoutes = getRoutes(prop.items);
+        allRoutes = [...collapseRoutes, ...allRoutes]; // Concatenate collapse routes before current routes
       }
+      
       if (prop.category) {
-        return getRoutes(prop.items);
-      } else {
-        return null;
+        const categoryRoutes = getRoutes(prop.items);
+        allRoutes = [...categoryRoutes, ...allRoutes]; // Concatenate category routes before current routes
       }
     });
+  
+    return allRoutes;
   };
+  
   document.documentElement.dir = "ltr";
   const { onOpen } = useDisclosure();
   return (
@@ -154,14 +166,12 @@ export default function Dashboard(props) {
               minH='100vh'
               pt='50px'>
               <Switch>
+                <Route path="/admin/users/new-user" component={NewUser} key={`new-user`}/>
                 {getRoutes(routes)}
                 <Redirect from='/' to='/admin/default' />
               </Switch>
             </Box>
           ) : null}
-          <Box>
-            <Footer />
-          </Box>
         </Box>
       </SidebarContext.Provider>
     </Box>

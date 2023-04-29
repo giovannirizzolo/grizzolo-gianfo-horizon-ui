@@ -7,6 +7,8 @@ import {
   MdHome,
   MdLock,
   MdOutlineShoppingCart,
+  MdApps,
+  MdAccountCircle,
 } from "react-icons/md";
 
 // Admin Imports
@@ -14,6 +16,10 @@ import MainDashboard from "views/admin/default";
 import NFTMarketplace from "views/admin/marketplace";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
+import Applications from "views/admin/applications";
+import Users from "views/admin/users";
+import NewUser from "views/admin/users/new-user";
+
 import RTL from "views/admin/rtl";
 
 // Auth Imports
@@ -70,6 +76,28 @@ const routes = [
     icon: <Icon as={MdHome} width='20px' height='20px' color='inherit' />,
     component: RTL,
   },
+  {
+    name: "Applications",
+    layout: "/admin",
+    path: "/apps",
+    icon: <Icon as={MdApps} width='20px' height='20px' color='inherit' />,
+    component: Applications,
+  },
+  {
+    name: "Users",
+    layout: "/admin",
+    path: "/users",
+    icon: <Icon as={MdAccountCircle} width='20px' height='20px' color='inherit' />,
+    component: Users,
+    children: [
+      {
+        name: "New User",
+        layout: "/admin",
+        path: "/users/new-user",
+        component: NewUser,
+      }
+    ]
+  }
 ];
 
 export default routes;
