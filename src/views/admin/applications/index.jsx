@@ -29,7 +29,11 @@ import useApplication from "services/hooks/application.hooks";
 
 export default function Applications() {
 
-const {applications, loading, error} = useApplication()
+const {applications, loading} = useApplication()
+
+// const handleUpdateApplicationView = () => {
+//   await getApplications()
+//
 
   // Chakra Color Mode
   return (
@@ -41,8 +45,8 @@ const {applications, loading, error} = useApplication()
             mb='20px'
             columns={{ sm: 1, md: 2, '2xl': 4 }}
             spacing={{ base: "20px", xl: "20px" }}>
-            {applications.map(({_id, name, description}) => (
-                <ApplicationCard _id={_id} name={name} description={description}/>
+            {applications.map(({id, name, description}, idx) => (
+                <ApplicationCard id={id} name={name} description={description} key={`app-card-${id}`}/>
             ))} </SimpleGrid> : null}
         {/* <DevelopmentTable
           columnsData={columnsDataDevelopment}

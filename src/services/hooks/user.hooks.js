@@ -5,17 +5,23 @@ import { baseUrl } from 'services/costants';
 const useUser = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [apiError, setApiError] = useState(null);
+
+  useEffect(() => {
+    console.log('apiError :>> ', apiError);
+  }, [apiError])
+  
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log('calling :>> ');
         const response = await axios.get(`${baseUrl}/users`);
         setUsers(response.data.data);
-        setError(null);
-      } catch (error) {
-        setError(error);
+        setApiError(null);
+      } catch (apiError) {
+        setApiError(apiError);
       } finally {
         setLoading(false);
       }
@@ -24,13 +30,17 @@ const useUser = () => {
     fetchData();
   }, []);
 
-  const createUser = async (newUser) => {
+  const createUser = async (userData) => {
     try {
-      const response = await axios.post(`${baseUrl}/users`, newUser);
-      setError(null);
+      console.log('userData :>> ', userData);
+      const response = await axios.post(`${baseUrl}/users`, userData);
+      setApiError(null);
       return response.data
     } catch (error) {
-      setError(error);
+      console.log('error :>> ', error);
+      console.log('error.response.data.data :>> ', error.response.data.data);
+      // setApiError(error.response.data.data);
+      return error
     }
   };
 
@@ -38,11 +48,11 @@ const useUser = () => {
     try{
         const response = await axios.get(`${baseUrl}/users/${userId}`)
         if(response.status > 200 && response.status < 300){
-            setError(null)
+            setApiError(null)
         }
         return response.data
     }catch(error){
-        setError(error)
+        setApiError(error)
     }
   };
 
@@ -53,9 +63,9 @@ const useUser = () => {
         user.id === updatedUser.id ? response.data : user
       );
       setUsers(updatedUsers);
-      setError(null);
+      setApiError(null);
     } catch (error) {
-      setError(error);
+      setApiError(error);
     }
   };
 
@@ -64,13 +74,13 @@ const useUser = () => {
       await axios.delete(`${baseUrl}/users/${userId}`);
       const updatedUsers = users.filter((user) => user.id !== userId);
       setUsers(updatedUsers);
-      setError(null);
+      setApiError(null);
     } catch (error) {
-      setError(error);
+      setApiError(error);
     }
   };
 
-  return { users, loading, error, createUser, getUser, updateUser, removeUser };
+  return { users, loading, apiError, createUser, getUser, updateUser, removeUser };
 };
 
 export default useUser;
