@@ -10,25 +10,23 @@ const useApplication = (applicationId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getApplications = async () => {
       setLoading(true);
-      try {
-        const response = await axios.get(`${baseUrl}/apps`);
-        console.log('response.data :>> ', response.data);        
-        setApplications(response.data.data);
-        setError(null);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
+        try {
+          const response = await axios.get(`${baseUrl}/apps`);
+          console.log('response.data :>> ', response.data);        
+          setApplications(response.data.data);
+          setError(null);
+        } catch (error) {
+          setError(error);
+        } finally {
+          setLoading(false);
+        }
     };
 
-    fetchData();
-  }, [applicationId]);
-
+    getApplications()
+  }, []);
   
-
   const getApplication = async (applicationId) => {
     try {
       const response = await axios.get(`${baseUrl}/apps/${applicationId}`);
@@ -63,19 +61,21 @@ const useApplication = (applicationId) => {
     }
   };
 
-  const removeApplication = async () => {
+  const deleteApplication = async (applicationId) => {
     try {
       const response = await axios.delete(`${baseUrl}/apps/${applicationId}`);
       if(response.status >= 200 && response.status < 300){
-        setError(null);
-    }
+        setError(false);
+        setApplications((prevApplications) => prevApplications.filter((app) => app.id !== applicationId))
+        console.log('applications :>> ', applications);
+      }
     return response.data
     } catch (error) {
       setError(error);
     }
   };
 
-  return { applications, loading, error, getApplication, updateApplication, removeApplication, createApplication };
+  return { applications, loading, error, getApplication, updateApplication, deleteApplication, createApplication };
 };
 
 export default useApplication;
