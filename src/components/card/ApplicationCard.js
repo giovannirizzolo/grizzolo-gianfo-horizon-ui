@@ -1,10 +1,11 @@
 
 // Chakra imports
-import { DeleteIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Button, Box, Flex, IconButton, Menu, MenuButton, MenuItem, MenuList, Spacer, Text, useDisclosure, createStandaloneToast } from "@chakra-ui/react";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { Box, Flex, Spacer, Text, createStandaloneToast, useDisclosure } from "@chakra-ui/react";
 import Card from "components/card/Card.js";
+import Menu from "components/menu/MainMenu";
 import DeleteModal from "components/modals/DeleteModal";
-import useApplication from 'services/hooks/application.hooks'
+import useApplication from 'services/hooks/application.hooks';
 
 
 
@@ -78,17 +79,19 @@ export default function ApplicationCard(props) {
     >
       Show Toast
     </Button> */}
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label='Options'
-              icon={<HamburgerIcon />}
-              variant='outline'
-            />
-            <MenuList>
-              <MenuItem icon={<DeleteIcon />} onClick={onOpen}>
-                Delete application
-              </MenuItem>
+          <Menu 
+            menuItems={[
+              {
+                text: 'Delete application',
+                iconComponent: DeleteIcon,
+                clickCallback: onOpen
+              },
+              {
+                text: 'Edit application',
+                iconComponent: EditIcon,
+                clickCallback: handleApplicationEdit(id)
+              },
+            ]}/>
               <DeleteModal 
                 title={`Delete application`}
                 msg={<>Are you sure you want to delete "{name}"?<br/> (Id: - {id})</>}
@@ -98,11 +101,6 @@ export default function ApplicationCard(props) {
                 onClose={onClose}
                 deleteCallback={() => handleApplicationDelete(id)}
               />
-              <MenuItem icon={<EditIcon />} onClick={() => handleApplicationEdit(id)}>
-                Edit application
-              </MenuItem>
-            </MenuList>
-          </Menu>
 
         </Flex>
         <Spacer />

@@ -21,18 +21,23 @@
 */
 
 // Chakra imports
-import { Box, Link, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid } from "@chakra-ui/react";
 import { Button, Flex } from "@chakra-ui/react/dist/chakra-ui-react.cjs";
 import UserCard from "components/card/UserCard";
 import CardsListSkeleton from "components/skeletons/CardsListSkeleton";
-import useUser from "services/hooks/user.hooks";
+import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import useUser from "services/hooks/user.hooks";
 
 
 export default function Users() {
 
 const {users, error, loading} = useUser()
 const history = useHistory()
+
+useEffect(() => {
+  console.log('[USERS]users :>> ', users);
+}, [users])
 
   // Chakra Color Mode
   return (
@@ -55,8 +60,8 @@ const history = useHistory()
         columns={{ sm: 1, md: 2, '2xl': 4 }}
         spacing={{ base: "20px", xl: "20px" }}>
             {
-                users.map(({_id, username, email}, idx) => (
-                    <UserCard _id={_id} username={username} email={email} key={`user-${idx}`}/>
+                users.map(({id, username, email}, idx) => (
+                    <UserCard id={id} username={username} email={email} key={`user-${idx}`}/>
                 ))
     }</SimpleGrid>
     </>)

@@ -17,6 +17,12 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
+import {
+  MdOutlineMoreHoriz,
+  MdOutlinePerson,
+  MdOutlineCardTravel,
+
+} from "react-icons/md";
 
 // Custom components
 import Card from "components/card/Card";
@@ -63,7 +69,24 @@ export default function CheckTable(props) {
           lineHeight='100%'>
           Check Table
         </Text>
-        <Menu />
+        <Menu 
+          menuItems={[
+            {
+              iconComponent: MdOutlinePerson,
+              text: 'Panel 1',
+              clickCallback: () => {}
+            },
+            {
+              iconComponent: MdOutlineMoreHoriz,
+              text: 'Panel 2',
+              clickCallback: () => {}
+            },
+            {
+              iconComponent: MdOutlineCardTravel,
+              text: 'Panel 3',
+              clickCallback: () => {}
+            },
+          ]}/>
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
