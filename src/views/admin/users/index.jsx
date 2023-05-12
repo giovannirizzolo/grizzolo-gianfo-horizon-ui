@@ -35,10 +35,6 @@ export default function Users() {
 const {users, error, loading} = useUser()
 const history = useHistory()
 
-useEffect(() => {
-  console.log('[USERS]users :>> ', users);
-}, [users])
-
   // Chakra Color Mode
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>

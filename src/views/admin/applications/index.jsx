@@ -56,26 +56,13 @@ const {applications, loading} = useApplication()
             {applications.map(({id, name, description}, idx) => (
                 <ApplicationCard id={id} name={name} description={description} key={`app-card-${id}`}/>
             ))} </SimpleGrid>
-          <Pagination 
+          {/* <Pagination 
             page={1}
             total_pages={7}
             per_page={10}
-            />
+            /> */}
         </Flex>
         ) : null}
-        {/* <DevelopmentTable
-          columnsData={columnsDataDevelopment}
-          tableData={tableDataDevelopment}
-        />
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
-        <ColumnsTable
-          columnsData={columnsDataColumns}
-          tableData={tableDataColumns}
-        />
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        /> */}
     </Box>
   );
 }
