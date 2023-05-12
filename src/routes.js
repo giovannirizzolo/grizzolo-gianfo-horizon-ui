@@ -24,6 +24,7 @@ import RTL from "views/admin/rtl";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
+import NewApplication from "views/admin/applications/new-application";
 
 const routes = [
   {
@@ -82,6 +83,14 @@ const routes = [
     path: "/apps",
     icon: <Icon as={MdApps} width='20px' height='20px' color='inherit' />,
     component: Applications,
+    children: [
+      {
+        name: "New Application",
+        layout: "/admin",
+        path: "/apps/new-application",
+        component: NewApplication,
+      }
+    ]
   },
   {
     name: "Users",
