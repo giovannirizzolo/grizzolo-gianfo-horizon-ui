@@ -14,7 +14,7 @@ const useApplication = (applicationId) => {
       setLoading(true);
         try {
           const response = await axios.get(`${baseUrl}/apps`);
-          console.log('response.data :>> ', response.data);        
+          
           setApplications(response.data.data);
           setError(null);
         } catch (error) {
@@ -67,7 +67,7 @@ const useApplication = (applicationId) => {
       if(response.status >= 200 && response.status < 300){
         setError(false);
         setApplications((prevApplications) => prevApplications.filter((app) => app.id !== applicationId))
-        console.log('applications :>> ', applications);
+        
       }
     return response.data
     } catch (error) {

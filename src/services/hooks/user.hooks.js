@@ -11,7 +11,7 @@ const useUser = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      console.log('calling :>> ');
+      
       const response = await axios.get(`${baseUrl}/users`);
       setUsers(response.data.data);
       setApiError(null);
@@ -23,19 +23,23 @@ const useUser = () => {
   };
 
   useEffect(() => {
-
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    
+    // Update your view here
   }, []);
 
   const createUser = async (userData) => {
     try {
-      console.log('userData :>> ', userData);
+      
       const response = await axios.post(`${baseUrl}/users`, userData);
       setApiError(null);
       return response.data
     } catch (error) {
-      console.log('error :>> ', error);
-      console.log('error.response.data.data :>> ', error.response.data.data);
+      
+      
       // setApiError(error.response.data.data);
       return error
     }
@@ -71,7 +75,7 @@ const useUser = () => {
       const {data} = await axios.delete(`${baseUrl}/users/${userId}`);
       const updatedUsers = users.filter((user) => user.id !== userId);
       setUsers(updatedUsers);
-      console.log('users :>> ', users);
+      
       setApiError(null);
       return {data}
     } catch (error) {

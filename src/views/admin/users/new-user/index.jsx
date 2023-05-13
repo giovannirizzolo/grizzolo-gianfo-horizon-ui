@@ -1,32 +1,60 @@
-import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack, createStandaloneToast, toast } from "@chakra-ui/react/dist/chakra-ui-react.cjs";
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Stack } from "@chakra-ui/react/dist/chakra-ui-react.cjs";
 import { isAxiosError } from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
+import { useHistory, useLocation } from "react-router-dom";
 import useUser from "services/hooks/user.hooks";
 import { formatISODate } from "utils/dates";
+import { showErrorToast, showSuccessToast } from "utils/toasts";
 
 const NewUser = () => {
-
-  const toast = createStandaloneToast()
   
     const [errors, setErrors] = useState({})
     const [formData, setFormData] = useState({});
 
-      const {createUser} = useUser()
+    const history = useHistory()
+    const location = useLocation()
+    const {isEdit, userId} = location.state
 
-      const handleDateChange = (birthDate) => { 
-        setFormData((prevState) => {
-          return {...prevState, birthdate: formatISODate(birthDate)}
-        })
+    const {getUser, createUser} = useUser()
+
+    useEffect(() => {
+      const fetchUser = async () => {
+
+        
+        if(isEdit){
+          //fetch user data and fill the form fields
+          const response = await getUser(userId)
+
+          if(isAxiosError(response)){
+            showErrorToast('An error occurred while fetching user data')
+            return
+          }
+
+          
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            email: response.email,
+            username: response.username
+          }))
+        }
+
       }
+      fetchUser()
+    },[])
+
+
+    const handleDateChange = (birthDate) => { 
+      setFormData((prevState) => {
+        return {...prevState, birthdate: formatISODate(birthDate)}
+      })
+    }
 
       const handleSubmit = async (e) => {
         e.preventDefault();
     
         // Perform form validation
         const validationErrors = validateForm(formData);
-
-        console.log('validationErrors :>> ', validationErrors);
 
         if (!Object.keys(validationErrors).length) {
           // Form submission logic here
@@ -36,27 +64,15 @@ const NewUser = () => {
 
             if(isAxiosError(response)){
               const errPayload = response.response.data.data
-              console.log('errPayload :>> ', errPayload);
               const errorMessages = typeof(errPayload) === 'string' ? errPayload : Object.values(errPayload).toString()
               
-              toast({
-                title: 'Error',
-                description: `${errorMessages}`,
-                status: 'error',
-                duration: 3000,
-                isClosable: true
-              })
+              showErrorToast(errorMessages)
               
             } else {
-              toast({
-                title: 'Success',
-                description: `User created successfully`,
-                status: 'success',
-                duration: 3000,
-                isClosable: true
-              }) 
+              showSuccessToast('User created successfully')
             }
             resetFields()
+            history.goBack()
           } else {
             setErrors(validationErrors);
           }
@@ -124,7 +140,7 @@ const NewUser = () => {
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <Stack justifyContent={'center'} direction={'column'} spacing={10}>
             <Heading as='h1' size='2xl' noOfLines={1} textAlign={'center'}>
-                Add new User
+                {isEdit ? 'Edit' : 'Add new'} User
             </Heading>
             <Flex justify={'center'}>
             <form onSubmit={handleSubmit} noValidate>
@@ -165,7 +181,7 @@ const NewUser = () => {
                       maxDate={new Date()}/>
                     {errors.birthdate && <FormErrorMessage>{errors.birthdate}</FormErrorMessage>}
                 </FormControl>
-                    <Button type='submit'>
+                    <Button type='submit' name="submit">
                         Create User
                     </Button>
                     <Button onClick={resetFields}>

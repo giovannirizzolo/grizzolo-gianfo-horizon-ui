@@ -21,21 +21,38 @@
 */
 
 // Chakra imports
-import { Box, Button, Flex, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Flex, ScaleFade, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import ApplicationCard from 'components/card/ApplicationCard';
-import Pagination from "components/pagination/Pagination";
 import CardsListSkeleton from "components/skeletons/CardsListSkeleton";
 import { useHistory } from "react-router-dom";
 import useApplication from "services/hooks/application.hooks";
+import { showErrorToast, showSuccessToast } from "utils/toasts";
 
 
 export default function Applications() {
 
-const {applications, loading} = useApplication()
+const {applications, loading, deleteApplication} = useApplication()
 
 // const handleUpdateApplicationView = () => {
 //   await getApplications()
-//
+// 
+const {isOpen, onToggle, onClose} = useDisclosure()
+
+const handleApplicationDelete = async (appId) => {
+  //show application delete modal
+  const deleteRes = await deleteApplication(appId)
+
+
+  if(!deleteRes){
+    //show APplication delete erro toast
+    showErrorToast('An error occurred while deleting the Application')
+    return 
+  }
+
+  showSuccessToast(deleteRes.message || 'Application deleted successfully')
+  // show success toast
+}
+
   const history = useHistory()
   // Chakra Color Mode
   return (
@@ -45,7 +62,9 @@ const {applications, loading} = useApplication()
         }
         {applications.length ? (
         <Flex justify={"center"} direction={"column"} gap={2}>
-        <Button w="30%" onClick={() => history.push('apps/new-application')}>
+        <Button w="30%" onClick={() => history.push('apps/new-application',{
+          isEdit: false
+        })}>
             {/* <Link as={Link} to="/users/new-user" /> */}
                 Add new application
         </Button>
@@ -53,8 +72,18 @@ const {applications, loading} = useApplication()
             mb='20px'
             columns={{ sm: 1, md: 2, '2xl': 4 }}
             spacing={{ base: "20px", xl: "20px" }}>
+              {/* <Button onClick={onToggle}>
+
+              </Button> */}
             {applications.map(({id, name, description}, idx) => (
-                <ApplicationCard id={id} name={name} description={description} key={`app-card-${id}`}/>
+              <ScaleFade initialScale={0.9} in={onClose} unmountOnExit>
+                <ApplicationCard 
+                  id={id}
+                  name={name} 
+                  description={description} 
+                  key={`app-card-${id}`}
+                  handleApplicationDelete={handleApplicationDelete}/>
+                </ScaleFade>
             ))} </SimpleGrid>
           {/* <Pagination 
             page={1}

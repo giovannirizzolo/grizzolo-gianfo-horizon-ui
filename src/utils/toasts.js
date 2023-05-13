@@ -3,7 +3,7 @@ const { createStandaloneToast } = require("@chakra-ui/react");
 const toast = createStandaloneToast()
 
 
-export const showErrorToast = ({description, title = 'Error' , duration = 3000}) => {
+export const showErrorToast = (description, title = 'Error' , duration = 3000) => {
     toast({
         title,
         description,
@@ -13,11 +13,11 @@ export const showErrorToast = ({description, title = 'Error' , duration = 3000})
     })
 }
 
-export const showSuccessToast = ({description, title = 'Success' , duration = 3000}) => {
+export const showSuccessToast = (description, title = 'Success' , duration = 3000) => {
     toast({
         title,
         description,
-        status: 'error',
+        status: 'success',
         duration,
         isClosable: true
     })

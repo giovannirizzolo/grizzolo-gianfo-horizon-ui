@@ -1,54 +1,28 @@
 
 // Chakra imports
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, Flex, Spacer, Text, createStandaloneToast, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 import Card from "components/card/Card.js";
 import Menu from "components/menu/MainMenu";
 import DeleteModal from "components/modals/DeleteModal";
-import useApplication from 'services/hooks/application.hooks';
+import { useHistory } from "react-router-dom";
 
 
-
-const handleApplicationEdit = (appId) => {
-  
-}
 
 export default function ApplicationCard(props) {
-  const { id, name, description, roles, updateApplicationsView,  ...rest } = props;
-  const {deleteApplication} = useApplication() 
-  const toast = createStandaloneToast()
+  const { id, name, description, roles, updateApplicationsView, handleApplicationDelete,  ...rest } = props;
 
-  
-  
-  const {onOpen, isOpen, onClose} = useDisclosure()
+  const history = useHistory()
 
-  const handleApplicationDelete = async (appId) => {
-    //show application delete modal
-    const deleteRes = await deleteApplication(appId)
-
-    onClose()
-
-    if(!deleteRes){
-      //show APplication delete erro toast
-      toast({
-        title: 'Error on delete',
-        description: `An error occurred while deleting the Application`,
-        status: 'error',
-        duration: 3000,
-        isClosable: true
-      })
-      return 
-    }
-
-    toast({
-      title: `Success`,
-      description: `Application deleted successfully`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true
+  const handleApplicationEdit = () => {
+    history.push('apps/new-application',
+    {
+      isEdit: true,
+      applicationId: id
     })
-    // show success toast
   }
+    
+  const {onOpen, isOpen, onClose} = useDisclosure()
 
   // Chakra Color Mode
   return (
@@ -89,7 +63,7 @@ export default function ApplicationCard(props) {
               {
                 text: 'Edit application',
                 iconComponent: EditIcon,
-                clickCallback: handleApplicationEdit(id)
+                clickCallback: handleApplicationEdit
               },
             ]}/>
               <DeleteModal 
