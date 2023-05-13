@@ -18,7 +18,7 @@ const Pagination = (props) => {
     
 
     // useEffect(() => {
-    //     console.log('currPage :>> ', currPage);
+    //     
     // }, [currPage])
 
     const isActive = (idx) => {

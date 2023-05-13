@@ -1,53 +1,28 @@
 
 // Chakra imports
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { Box, Flex, Spacer, Text, createStandaloneToast, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Text, useDisclosure } from "@chakra-ui/react";
 // Custom components
 import Card from "components/card/Card.js";
 import Menu from "components/menu/MainMenu";
 import DeleteModal from "components/modals/DeleteModal";
-import useUser from "services/hooks/user.hooks";
+import { useHistory } from "react-router-dom";
 
 
 export default function UserCard(props) {
-  const { id, username, email,  ...rest } = props;
+  const { id, username, email,  handleUserDelete, ...rest } = props;
 
   // Chakra Color Mode
   const {onOpen, isOpen, onClose} = useDisclosure()
 
-  const toast = createStandaloneToast()
+  const history = useHistory()
 
-  const {deleteUser} = useUser()
-
-  const handleUserEdit = (id) => {
-
-  }
-  const handleUserDelete = async (userId) => {
-    //show application delete modal
-    const {data} = await deleteUser(userId)
-
-    onClose()
-
-    if(!data.message){
-      //show APplication delete erro toast
-      toast({
-        title: 'Error on delete',
-        description: `An error occurred while deleting the User`,
-        status: 'error',
-        duration: 3000,
-        isClosable: true
-      })
-      return 
-    }
-
-    toast({
-      title: `Success`,
-      description: `User deleted successfully`,
-      status: 'success',
-      duration: 3000,
-      isClosable: true
+  const handleUserEdit = () => {
+    history.push('users/new-user', 
+    {
+      isEdit: true,
+      userId: id
     })
-    // show success toast
   }
 
   return (
@@ -74,7 +49,7 @@ export default function UserCard(props) {
               {
                 text: 'Edit user',
                 iconComponent: EditIcon,
-                clickCallback: handleUserEdit(id)
+                clickCallback: handleUserEdit
               },
             ]}/>
 

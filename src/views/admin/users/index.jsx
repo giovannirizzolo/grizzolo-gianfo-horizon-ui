@@ -21,18 +21,35 @@
 */
 
 // Chakra imports
-import { Box, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import { Button, Flex } from "@chakra-ui/react/dist/chakra-ui-react.cjs";
 import UserCard from "components/card/UserCard";
 import CardsListSkeleton from "components/skeletons/CardsListSkeleton";
-import { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import useUser from "services/hooks/user.hooks";
+import { showErrorToast, showSuccessToast } from "utils/toasts";
 
 
 export default function Users() {
 
-const {users, error, loading} = useUser()
+const {users, error, loading, deleteUser} = useUser()
+
+const handleUserDelete = async (userId) => {
+  //show application delete modal
+  const {data} = await deleteUser(userId)
+
+
+  
+  if(!data.message){
+    //show APplication delete erro toast
+    showErrorToast('An error occurred while deleting the User')
+    return 
+  }
+
+  showSuccessToast(data.message || 'User deleted successfully')
+  // show success toast
+}
+
 const history = useHistory()
 
   // Chakra Color Mode
@@ -46,9 +63,13 @@ const history = useHistory()
     {users.length ? 
     (<>
     <Flex mb="20px" justify="center">
-        <Button w="30%" onClick={() => history.push('users/new-user')}>
+        {/* should change route new-user with just update */}
+        <Button w="30%" onClick={() => history.push('users/new-user',
+        {
+          isEdit: false
+        })}>
             {/* <Link as={Link} to="/users/new-user" /> */}
-                Add new user
+            Add new user
         </Button>
     </Flex>
     <SimpleGrid
@@ -57,11 +78,16 @@ const history = useHistory()
         spacing={{ base: "20px", xl: "20px" }}>
             {
                 users.map(({id, username, email}, idx) => (
-                    <UserCard id={id} username={username} email={email} key={`user-${idx}`}/>
+                    <UserCard 
+                      id={id}
+                      username={username}
+                      email={email}
+                      key={`user-${idx}`}
+                      handleUserDelete={handleUserDelete}/>
                 ))
     }</SimpleGrid>
     </>)
-     : null}
+    : null}
     </Box>
   );
 }

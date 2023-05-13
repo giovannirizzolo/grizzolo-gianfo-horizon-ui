@@ -1,13 +1,39 @@
 import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, Input, Select, Stack } from "@chakra-ui/react"
 import { isAxiosError } from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useHistory, useLocation } from "react-router-dom"
 import useApplication from "services/hooks/application.hooks"
 import { showErrorToast, showSuccessToast } from "utils/toasts"
 
 const NewApplication = () => {
+    const history = useHistory()
+
     const [errors, setErrors] = useState({})
     const [formData, setFormData] = useState({});
-    const {createApplication} = useApplication()
+    const {createApplication, getApplication} = useApplication()
+
+    const location = useLocation()
+
+    const {isEdit, applicationId} = location.state 
+
+    useEffect(() => {
+      const fetchApp = async () => {
+
+        if(isEdit){
+          //fetch app data and fill the form fields
+          const response = await getApplication(applicationId)
+
+          if(isAxiosError(response)){
+            showErrorToast('An error occurred while fetching application data')
+            return
+          }
+
+          
+          setFormData(response)
+        }
+      }
+      fetchApp()
+    },[])
 
     const handleChange = (e) => {
         setFormData({
@@ -22,8 +48,6 @@ const NewApplication = () => {
         // Perform form validation
         const validationErrors = validateForm(formData);
 
-        console.log('validationErrors :>> ', validationErrors);
-
         if (!Object.keys(validationErrors).length) {
           // Form submission logic here
 
@@ -37,20 +61,21 @@ const NewApplication = () => {
               showErrorToast(errorMessages)
               
             } else {
-              showSuccessToast('Application created successfully')
+              showSuccessToast(response.data.message || 'Application created successfully')
             }
             resetFields()
+            history.goBack()
           } else {
             setErrors(validationErrors);
           }
       };
 
       const resetFields = () => {
-        setFormData({
+        setFormData((prevFormData) => ({
+          ...prevFormData,
           name: '',
-          description: '',
-          roles: [],
-        });
+          description: ''
+        }));
         setErrors({});
       };
 
@@ -76,7 +101,7 @@ const NewApplication = () => {
         <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <Stack justifyContent={'center'} direction={'column'} spacing={10}>
             <Heading as='h1' size='2xl' noOfLines={1} textAlign={'center'}>
-                Add new Application
+                {isEdit ? 'Edit' : 'Add new'} Application
             </Heading>
             <Flex justify={'center'}>
             <form onSubmit={handleSubmit} noValidate>
@@ -93,13 +118,10 @@ const NewApplication = () => {
                 <FormControl isInvalid={errors.roles}>
                     <FormLabel>Roles</FormLabel>
                     <Select placeholder={`Select roles`}>
-                        {/* {roles.map((role, idx) => (
-                            <option key={`role-${idx}`} value={role.name}>{role.name}</option>
-                        )) } */}
-
-                    
+                        {formData.roles ? formData.roles.map((role, idx) => (
+                            <option key={`role-${idx}`} value={role}>{role}</option>
+                        )) : null}
                     </Select>
-                    
                     {errors.roles && <FormErrorMessage>{errors.roles}</FormErrorMessage>}
                 </FormControl>                
                     <Button type='submit'>

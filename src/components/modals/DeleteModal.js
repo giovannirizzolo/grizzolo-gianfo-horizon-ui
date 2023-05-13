@@ -1,7 +1,7 @@
 import { Button, Text, Modal, ModalOverlay, ModalHeader, ModalFooter, ModalContent, ModalCloseButton, ModalBody, useDisclosure } from "@chakra-ui/react"
 
 const  DeleteModal = ({title, msg, confirmTxt, closeTxt, deleteCallback, isOpen, onClose}) => {
-    
+
     return (
       <>
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -15,10 +15,10 @@ const  DeleteModal = ({title, msg, confirmTxt, closeTxt, deleteCallback, isOpen,
               </Text>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
+              <Button variant='ghost' mr={3} onClick={onClose}>
                 {closeTxt}
               </Button>
-              <Button variant='ghost' onClick={deleteCallback}>{confirmTxt}</Button>
+              <Button colorScheme='blue' onClick={deleteCallback}>{confirmTxt}</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
